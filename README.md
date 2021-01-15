@@ -11,32 +11,23 @@ I grab rb_tree from linux kernel. Just import map.h, rbtree.h, rbtree.c in you p
 
 //put the key and value into map
 root_t tree = RB_ROOT; 
-char *key = "hello";
-char *word = "world";
-put(&tree, key, word);
+int x = 1;
+double y = 2;
+map_insert(&tree1, x, y);
 
 //get the value from key
-map_t *data = get(&tree, "zhang");
-if (data != NULL)
-	printf("%s\n", data->val);
+map_t *data = map_query(&tree1, x);
+if (data != NULL) printf("%f\n", data -> val);
 
 //Traversal
 map_t *node;
 for (node = map_first(&tree); node; node=map_next(&(node->node))) {
-	printf("%s\n", node->val);
-}
-
+	printf("%f\n", node -> val);
+} 
 //Free map node
-if (data) {
-    rb_erase(&data->node, &tree);
-	map_free(data);
-}
-````
+tree_free(tree1);
+```
 
 # Bug Reporting and Feature Requests
 If you find a bug or have an enhancement request, simply file an Issue and send a message (via github messages) to the Committers to the project to let them know that you have filed an Issue.
-
-# Contact
-tjbroadroad@163.com
-
 

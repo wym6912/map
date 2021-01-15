@@ -19,9 +19,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
-root_t tree = RB_ROOT;
+root_t tree1 = RB_ROOT, tree2 = RB_ROOT;
 
 int main() {
+    /*
     char *key = "hello";
     char *word = "world";
     put(&tree, key, word);
@@ -53,6 +54,18 @@ int main() {
             map_free(nodeFree);
         }
     }
+    */
+    int x = 1, y = 2;
+    map_insert(&tree1, x, (double)y);
+    map_insert(&tree2, y, (double)x);
+    map_insert(&tree1, y, (double)x);
+    map_t *data = map_query(&tree1, x);
+    if(data != NULL) printf("%f\n", data -> val);
+    data = map_query(&tree2, y);
+    if(data != NULL) printf("%f\n", data -> val);
+    data = map_query(&tree1, y);
+    if(data != NULL) printf("%f\n", data -> val);
+    tree_free(tree1);
     return 0;
 }
 

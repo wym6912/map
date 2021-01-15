@@ -24,25 +24,25 @@
 
 struct map {
     struct rb_node node;
-    char *key;
-    char *val;
+    int key;
+    double val;
 };
 
 typedef struct map map_t;
 typedef struct rb_root root_t;
 typedef struct rb_node rb_node_t;
 
-map_t *get(root_t *root, char *str) {
-   rb_node_t *node = root->rb_node; 
+map_t *map_query(root_t *root, int str) {
+   rb_node_t *node = root -> rb_node; 
    while (node) {
         map_t *data = container_of(node, map_t, node);
 
         //compare between the key with the keys in map
-        int cmp = strcmp(str, data->key);
+        int cmp = str - data -> key;
         if (cmp < 0) {
-            node = node->rb_left;
+            node = node -> rb_left;
         }else if (cmp > 0) {
-            node = node->rb_right;
+            node = node -> rb_right;
         }else {
             return data;
         }
@@ -50,25 +50,25 @@ map_t *get(root_t *root, char *str) {
    return NULL;
 }
 
-int put(root_t *root, char* key, char* val) {
-    map_t *data = (map_t*)malloc(sizeof(map_t));
-    data->key = (char*)malloc((strlen(key)+1)*sizeof(char));
-    strcpy(data->key, key);
-    data->val = (char*)malloc((strlen(val)+1)*sizeof(char));
-    strcpy(data->val, val);
+int map_insert(root_t *root, int key, double val) {
+    map_t *data = (map_t *)malloc(sizeof(map_t));
+    //data -> key = (int *)malloc(sizeof(int));
+    data -> key = key;
+    //data -> val = (double *)malloc(sizeof(double));
+    data -> val = val;
     
-    rb_node_t **new_node = &(root->rb_node), *parent = NULL;
+    rb_node_t **new_node = &(root -> rb_node), *parent = NULL;
     while (*new_node) {
         map_t *this_node = container_of(*new_node, map_t, node);
-        int result = strcmp(key, this_node->key);
+        int result = key - this_node -> key;
         parent = *new_node;
 
         if (result < 0) {
-            new_node = &((*new_node)->rb_left);
+            new_node = &((*new_node) -> rb_left);
         }else if (result > 0) {
-            new_node = &((*new_node)->rb_right);
+            new_node = &((*new_node) -> rb_right);
         }else {
-            strcpy(this_node->val, val);
+            val = this_node -> val;
             free(data);
             return 0;
         }
@@ -92,14 +92,26 @@ map_t *map_next(rb_node_t *node) {
 
 void map_free(map_t *node){
     if (node != NULL) {
+        /*
         if (node->key != NULL) {
             free(node->key);
             node->key = NULL;
             free(node->val);
             node->val = NULL;
-    }
+    }*/
         free(node);
         node = NULL;
+    }
+}
+
+void tree_free(root_t tree_root)
+{
+    map_t *nodeFree = NULL;
+    for (nodeFree = map_first(&tree_root); nodeFree; nodeFree = map_first(&tree_root)) {
+        if (nodeFree) {
+            rb_erase(&nodeFree->node, &tree_root);
+            map_free(nodeFree);
+        }
     }
 }
 
